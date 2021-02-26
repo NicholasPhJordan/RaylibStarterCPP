@@ -22,14 +22,41 @@
 #include "raylib.h"
 #include <iostream>
 
-unsigned int ElfHash(unsigned char* data)
+//ElfHash class example 
+//unsigned int ElfHash(unsigned char* data)
+//{
+//    unsigned int hash = 0;
+//    unsigned int x = 0;
+//
+//    for (unsigned char* i = data; *i != '\0'; ++i)
+//    {
+//        hash =(hash << 4) + *i;
+//        if ((x = hash & 0xF0000000L) != 0)
+//        {
+//            hash ^= (x >> 24);
+//            hash &= ~x;
+//        }
+//    }
+//
+//    return (hash & 0x7FFFFFFF);
+//}
+
+//me trying to create a good hashing 
+unsigned int MyHash(unsigned char* data)
 {
     unsigned int hash = 0;
     unsigned int x = 0;
 
     for (unsigned char* i = data; *i != '\0'; ++i)
     {
-        hash = (hash << 4) + *i;
+        //similar to the sdbm method
+        hash = (hash << 4) + (hash << 14) - *i;
+        //adds some funk to the end hash value
+        hash += (hash << 10);
+        hash ^= (hash >> 6);
+
+
+        //kept the same if just in case
         if ((x = hash & 0xF0000000L) != 0)
         {
             hash ^= (x >> 24);
@@ -37,7 +64,8 @@ unsigned int ElfHash(unsigned char* data)
         }
     }
 
-    return (hash & 0x7FFFFFFF);
+    //wasn't quite sure what the "0x7FFFFFFF" was foor so i kept it for safe keeping
+    return (hash & 0x7FFFFFFF); 
 }
 
 int main(int argc, char* argv[])
@@ -62,7 +90,7 @@ int main(int argc, char* argv[])
         // Update
         //----------------------------------------------------------------------------------
         std::cin >> input;
-        checkSum = ElfHash(input);
+        checkSum = MyHash(input);
         //----------------------------------------------------------------------------------
 
         // Draw
